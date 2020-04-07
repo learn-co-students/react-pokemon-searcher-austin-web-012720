@@ -1,34 +1,87 @@
-import React from 'react'
-import { Form } from 'semantic-ui-react'
+import React from 'react';
+import { Form } from 'semantic-ui-react';
+
+const API_URL = 'http://localhost:3000/pokemon';
 
 class PokemonForm extends React.Component {
   constructor() {
-    super()
+    super();
 
     this.state = {
       name: '',
       hp: '',
       frontUrl: '',
-      backUrl: ''
-    }
+      backUrl: '',
+    };
   }
+
+  onFormChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  onFormSubmit = (e) => {
+    e.preventDefault();
+    const poke = {
+      id: Math.random(),
+      name: this.state.name,
+      stats: [{ value: this.state.hp, name: 'hp' }],
+      sprites: {
+        front: this.state.frontUrl,
+        back: this.state.backUrl,
+      },
+    };
+    fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(poke),
+    });
+
+    this.props.addPokemon(poke);
+  };
 
   render() {
     return (
       <div>
         <h3>Add a Pokemon!</h3>
-        <Form onSubmit={this.handleSubmit}>
+        <Form onSubmit={this.onFormSubmit}>
           <Form.Group widths="equal">
-            <Form.Input fluid label="Name" placeholder="Name" name="name" />
-            <Form.Input fluid label="hp" placeholder="hp" name="hp" />
-            <Form.Input fluid label="Front Image URL" placeholder="url" name="frontUrl" />
-            <Form.Input fluid label="Back Image URL" placeholder="url" name="backUrl" />
+            <Form.Input
+              fluid
+              onChange={this.onFormChange}
+              label="Name"
+              placeholder="Name"
+              name="name"
+            />
+            <Form.Input
+              fluid
+              onChange={this.onFormChange}
+              label="hp"
+              placeholder="hp"
+              name="hp"
+            />
+            <Form.Input
+              fluid
+              onChange={this.onFormChange}
+              label="Front Image URL"
+              placeholder="url"
+              name="frontUrl"
+            />
+            <Form.Input
+              fluid
+              onChange={this.onFormChange}
+              label="Back Image URL"
+              placeholder="url"
+              name="backUrl"
+            />
           </Form.Group>
           <Form.Button>Submit</Form.Button>
         </Form>
       </div>
-    )
+    );
   }
 }
 
-export default PokemonForm
+export default PokemonForm;
