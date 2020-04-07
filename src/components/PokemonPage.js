@@ -4,7 +4,36 @@ import PokemonForm from './PokemonForm'
 import Search from './Search'
 import { Container } from 'semantic-ui-react'
 
+const pokemonAPI = 'http://localhost:3000/pokemon'
+
 class PokemonPage extends React.Component {
+
+  constructor () {
+    super()
+
+    this.state = {
+      pokemons: [],
+      filteredPokemons: []
+    }
+  };
+
+  fetchPokemons = () => {
+    fetch(pokemonAPI)
+      .then(res => res.json())
+      .then(pokemons => {
+        this.setState({ pokemons })
+      })
+  };
+
+  pokemonsFiltered = (pokemonName) => {
+    let filteredPokemons = this.state.pokemons.filter(pokemon => pokemon.name.startsWith(pokemonName))
+    this.setState({ filteredPokemons })
+  };
+
+  componentDidMount() {
+    this.fetchPokemons();
+  };
+
   render() {
     return (
       <Container>
@@ -12,12 +41,12 @@ class PokemonPage extends React.Component {
         <br />
         <PokemonForm />
         <br />
-        <Search onChange={() => console.log('🤔')} />
+        <Search onChange={this.pokemonsFiltered} />
         <br />
-        <PokemonCollection />
+        <PokemonCollection pokemons={!this.state.filteredPokemons.length ? this.state.pokemons : this.state.filteredPokemons}/>
       </Container>
     )
   }
 }
 
-export default PokemonPage
+export default PokemonPage;
